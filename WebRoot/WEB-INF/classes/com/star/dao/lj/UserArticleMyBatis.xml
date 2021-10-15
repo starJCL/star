@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.lj.UserArticleMyBatis">
+	<select id="list" resultType="com.star.pojo.article">
+		<if test="order == 'DA'">
+			SELECT * FROM `article` WHERE `title` LIKE #{fuzzy} AND `author`=#{name}
+			ORDER BY `createDate` DESC
+		</if>
+		<if test="order == 'NU'">
+			SELECT COUNT(u_id) `by`,a.* FROM `like` l LEFT JOIN `article` a ON a.`id`=l.`a_id` WHERE `title` LIKE #{fuzzy} AND `author`=#{name} GROUP BY `a_id` ORDER BY `by` DESC
+		</if>
+	</select>
+	
+	<select id="Article_Like" resultType="int">
+		SELECT COUNT(u_id) FROM `like` l LEFT JOIN `article` a ON a.`id`=l.`a_id` WHERE a.`id`=#{id}
+	</select>
+	
+	<select id="Article_Like_User" resultType="com.star.pojo.user">
+		SELECT u.nickname,u.user_img FROM `like` l INNER JOIN `user` u ON l.u_id=u.id WHERE a_id=#{id}
+	</select>
+	
+	<select id="detail" resultType="com.star.pojo.article">
+		SELECT * FROM `article` WHERE id=#{id}
+	</select>
+	
+	<delete id="del">
+		DELETE FROM `article` WHERE id=#{id}
+	</delete>
+	
+	<select id="count" resultType="int">
+		SELECT COUNT(*) FROM `like` WHERE u_id=(SELECT id FROM `user` WHERE username=#{name}) AND a_id=#{id}
+	</select>
+	
+	<insert id="like">
+		<if test="count == 0">
+			INSERT INTO `like`(u_id,a_id) VALUE((SELECT id FROM `user` WHERE username=#{name}),#{id})
+		</if>
+		<if test="count != 0">
+			DELETE FROM `like` WHERE u_id=(SELECT id FROM `user` WHERE username=#{name}) AND a_id=#{id}
+		</if>
+	</insert>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.jcl.SCjia">
+	<!-- 查询收藏夹名称 -->
+	<select id="favoriteName" resultType="favorite">
+		select distinct  `name` from  `favorite` where u_id = #{id}
+	</select>
+	<resultMap type="article" id="s">
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="author" property="author" />
+		<result column="matter" property="matter" />
+		<result column="createDate" property="createDate" />
+		<result column="article_img1" property="article_img1" />
+		<association property="user" javaType="user" >
+			<result column="nickname" property="nickname" />
+			<result column="user_img" property="user_img" />
+		</association>
+		<association property="favorite" javaType="favorite" >
+			<result column="a" property="id" />
+		</association>
+	</resultMap>
+	<!-- 查询收藏的文章 -->
+	<select id="favoritewz" resultMap="s">
+			SELECT u.`nickname`, u.`user_img`,f.id as a, a.* FROM `article` a  
+		JOIN `favorite` f 
+		ON f.a_id = a.id 
+		JOIN `user` u
+		ON u.`id` = a.`user_id`
+		where   f.u_id=#{id}
+        <if test="name != 'all'">
+           AND 
+		f.name=#{name} <!-- 收藏夹名字  -->
+        </if>
+ 
+	</select>
+	
+	<delete id="del">
+	delete from `favorite`where id = #{id}
+	</delete>
+
+
+</mapper>

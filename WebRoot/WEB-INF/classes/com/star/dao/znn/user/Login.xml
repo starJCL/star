@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.znn.user.Login">
+	<select id="login" resultType="com.star.pojo.user">
+		SELECT * FROM `user` WHERE username=#{name}AND PASSWORD=#{pwd}
+	</select>
+	<insert id="register">
+		INSERT INTO `user`
+		(username,PASSWORD,sex,email,brithDate,phone,user_img,createDate)VALUE(#{username},#{password},#{sex},#{email},#{brithDate},#{phone},#{user_img},#{createDate})
+	</insert>
+	<select id="getname" resultType="int">
+		SELECT count(*) FROM `user` WHERE username=#{name}
+	</select>
+
+	<select id="getphone" resultType="int">
+		SELECT count(*) FROM `user` WHERE phone=#{phone}
+	</select>
+	<select id="users" resultType="com.star.pojo.user">
+		SELECT * FROM `user` limit #{index},3
+	</select>
+	<update id="uphead">
+	UPDATE `user` SET user_img=#{userimg} WHERE id=#{id}
+	</update>
+   <update id="upbage">
+	UPDATE `user` SET userBackground=#{bageimg} WHERE id=#{id}
+	</update>
+</mapper>

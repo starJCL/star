@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.2.xsd
+        ">
+
+	<!-- 配置定时器扫描器 -->
+	<context:component-scan base-package="com.star.controller.jcl" />
+	<!-- 定时任务配置 scheduler 方式 注解 -->
+	<task:executor id="executor" pool-size="5" />
+	<task:scheduler id="scheduler" pool-size="10" />
+	<task:annotation-driven executor="executor"
+		scheduler="scheduler" />
+
+	<!-- 视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/star/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	<!-- 全局异常 -->
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.RuntimeException">../error</prop>
+			</props>
+		</property>
+	</bean> 
+
+
+
+
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes" value="text/plain;charset=UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+
+	<!-- 扫描装配 -->
+	<context:component-scan base-package="com"></context:component-scan>
+
+	<mvc:interceptors>
+		<!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/*" />
+			<mvc:exclude-mapping path="/login/" />
+			<bean class="com.star.util.Filter" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+
+
+	<!-- springMVC 只能加载jsp文件 所以其他文件需要映射 -->
+	<mvc:annotation-driven />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/img/**" location="/img/" />
+	<mvc:resources mapping="/fonts/**" location="/fonts/" />
+	<mvc:resources mapping="/Bootstrap/**" location="/Bootstrap/" />
+	<mvc:resources mapping="/Documentation/**" location="/Documentation/" />
+	<mvc:resources mapping="/META-INF/**" location="/META-INF/" />
+	<mvc:resources mapping="/mp3/**" location="/mp3/" />
+	<mvc:resources mapping="/pages-sources/**" location="/pages-sources/" />
+	<mvc:resources mapping="/partials/**" location="/partials/" />
+	<mvc:resources mapping="/sass/**" location="/sass/" />
+	<mvc:resources mapping="/svg-icons/**" location="/svg-icons/" />
+	<mvc:resources mapping="/videos/**" location="/videos/" />
+	<mvc:resources mapping="/tinymce/**" location="/tinymce/" />
+	<mvc:resources mapping="/ico/**" location="/ico/"
+		cache-period="31536000" />
+	<!-- 静态资源映射 -->
+
+
+	<!-- 配置MultipartResolver，用于上传文件，使用spring的CommonsMultipartResolver -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="5000000" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<mvc:resources mapping="static/img/**" location="/static/img/" />
+
+</beans>

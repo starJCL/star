@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.ly.sanjiliandong">
+
+	<!-- 查询省的 -->
+	<select id="sheng" resultType="province">
+		SELECT * FROM `province`
+	</select>
+
+	<!-- 查询市的 -->
+	<select id="shi" resultType="city">
+		SELECT * FROM city WHERE pro_code=(SELECT pro_code FROM `province` WHERE id = #{id})
+	</select>
+
+
+	<!-- 查询 区的 -->
+	<select id="province" resultType="area">
+		SELECT * FROM area WHERE city_code=(SELECT city_code FROM `city` WHERE id = #{id})
+	</select>
+</mapper>

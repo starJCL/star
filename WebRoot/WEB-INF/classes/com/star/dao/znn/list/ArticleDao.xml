@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.znn.list.ArticleDao">
+	<select id="getarticle" resultType="com.star.pojo.article"><!-- 查询文章全部 -->
+		SELECT * FROM `article` WHERE audit=2 AND type_id=#{id}
+		<if test="str==null">
+			limit #{index},3
+		</if>
+	</select>
+	<select id="getall" resultType="com.star.pojo.article"><!--那id查询全部内容-->
+		SELECT * FROM `article` WHERE
+		id=#{id}
+	</select>
+	<resultMap type="com.star.pojo.article" id="article">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="author" property="author" />
+		<result column="matter" property="matter" />
+		<result column="audit" property="audit" />
+		<result column="createDate" property="createDate" />
+		<result column="type_id" property="type_id" />
+		<result column="audit" property="audit" />
+		<association property="getLike" javaType="com.star.pojo.like">
+			<id column="a_id" property="a_id" />
+			<result column="c_id" property="c_id" />
+		</association>
+	</resultMap>
+	<select id="ranking" resultMap="article"><!--排行榜-->
+		SELECT * FROM article AS a INNER
+		JOIN `like` AS l ON l.a_id=a.id WHERE
+		type_id=1 AND audit=2 ORDER BY
+		l.`c_id` DESC LIMIT 0,3
+	</select>
+	
+	<select id="essay" resultType="com.star.pojo.article">
+	SELECT * FROM `article` WHERE audit=2 AND type_id=1 limit #{index},1
+	</select>
+	
+	<select id="getcount" resultType="int">
+	 SELECT COUNT(*)FROM `article` WHERE audit=2 AND type_id=#{tid}
+	</select>
+	<select id="getimg" resultType="com.star.pojo.article"><!--查询新闻全部 -->
+	SELECT * FROM `article` WHERE audit=2 AND type_id=#{id} limit #{index},2
+	</select>
+</mapper>

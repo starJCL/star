@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.jcl.articleMapper">
+	<insert id="article">
+		insert into
+		`article`(`title`,`author`,`matter`,`createDate`,type_id)
+		value(#{title},#{author},#{matter},#{createDate},#{type_id})
+	</insert>
+	<select id="videos" resultType="article">
+		select
+		*
+		from
+		`star`.`article`
+		where
+		`audit` = 2
+		and
+		`type_id` = #{id}
+		order by `createDate` desc
+	</select>
+
+	<!-- <resultMap type="com.star.pojo.article" id="s"> <id column="id" property="id" 
+		/> <result column="title" property="title" /> <result column="author" property="author" 
+		/> <result column="matter" property="matter" /> <result column="article_video3" 
+		property="article_video3" /> <result column="createDate" property="createDate" 
+		/> <result column="article_video1" property="article_video1" /> <result column="article_video2" 
+		property="article_video2" /> <association property="user" javaType="user"> 
+		<id column="u_id" property="id" /> <result column="nickname" property="nickname" 
+		/> <result column="user_img" property="user_img" /> </association> </resultMap> 
+		<select id="videos" resultMap="s" > select a.`id`, a.`title`, a.`author`, 
+		a. `matter`, a. `article_video1`, a.`article_video2`, a.`article_video3`, 
+		a.`createDate`, u.`nickname`, u.`user_img`, u.id as u_id from `article` as 
+		a join `user` as u on a.`user_id` = u.`id` where a.`audit` = 2 and a.`type_id` 
+		= 2 order by a.`createDate` desc </select> -->
+
+
+	<!-- 所有的文章数量 -->
+	<select id="wenShu" resultType="int">
+		SELECT COUNT(1) FROM `article`
+		WHERE `user_id` = #{id} and audit = 2
+	</select>
+	<!-- 所有文章的点赞数 -->
+	<select id="likeShu" resultType="int">
+		SELECT COUNT(1) FROM `like`
+		WHERE a_id IN (SELECT id FROM `article` WHERE user_id = #{id})
+		AND u_id
+		!= 0
+
+	</select>
+	<!-- 没有通过审核的文章 -->
+	<select id="weiShu" resultType="int">
+		SELECT COUNT(1) FROM `article`
+		WHERE audit = 1 AND `user_id` = 3
+	</select>
+
+	<!-- 本月发布的文章 -->
+	<select id="yueShu" resultType="int">
+		SELECT COUNT(1) FROM `article`
+		WHERE DATE_FORMAT(createDate, '%Y%m' ) = DATE_FORMAT( CURDATE( ) ,
+		'%Y%m' )
+	</select>
+
+	
+	<resultMap type="type" id="a">
+		<result column="num" property="id"></result>
+		<result column="type" property="type"></result>
+	
+	</resultMap>
+
+	<!-- 每个类型的数量 -->
+	<select id="typeNum" resultMap="a">
+		SELECT COUNT(1) AS num,t.`type`
+		FROM `article` AS a
+		JOIN `type` AS t
+		ON a.`type_id` = t.`id`
+		WHERE a.`user_id` = #{id}
+		AND audit = 2
+		GROUP BY a.type_id
+	</select>
+
+
+
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.dao.ly.Information">
+
+	<!-- 查询 -->
+	<select id="selU" resultMap="map1">
+		SELECT u.* ,p.pro_name,p.pro_code,c.city_name,area_name
+		FROM `user` as u
+		INNER JOIN province p
+		on user_provinse = p.id
+		INNER JOIN city c
+		on user_city = c.id
+		INNER JOIN area a
+		ON user_area = a.id
+		where username=#{username}
+	</select>
+
+	<resultMap type="user" id="map1">
+		<result column="pro_name" property="pro_name" />
+		<result column="pro_code" property="pro_code" />
+		<result column="city_name" property="city_name" />
+		<result column="area_name" property="area_name" />
+
+	</resultMap>
+	<!-- 修改 -->
+	<update id="updU">
+		UPDATE `user` SET nickname=#{nickname}, qq_card=#{qq_card},email=#{email},
+		sex=#{sex},phone=#{phone},user_provinse=#{user_provinse},
+		user_city=#{user_city},user_area=#{user_area} ,`desc`=#{desc} WHERE
+		username=#{username}
+	</update>
+	
+	<!-- 修改用户状态 -->
+	<update id="updS">
+	UPDATE `user` SET card_state=#{card_state} WHERE username=#{username}
+	</update>	
+	
+	<!-- vip -->
+	<update id="vip">
+	UPDATE `user` SET user_grade=#{user_grade} WHERE username=#{username};
+	</update>
+	
+	
+</mapper>
